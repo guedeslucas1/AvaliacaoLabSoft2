@@ -2,5 +2,5 @@
 * text=auto eol=lf
 
 # Ignores for analysis is used to produce the language stats bar which displays the languages percentages
-plugins/* linguist-vendored=true
-dist/* linguist-vendored=true
+applications/patient_app/static/plugins/* linguist-vendored=true
+applications/patient_app/static/dist/* linguist-vendored=true
