@@ -37,6 +37,7 @@ VitaLink
 ├── .gitignore             # Specifies intentionally untracked files to ignore
 ├── README.md              # The file you are currently reading
 └── requirements.txt       # All the dependencies required for the project
+```
 
 ## ✨ General Features
 
