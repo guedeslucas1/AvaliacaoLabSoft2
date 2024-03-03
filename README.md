@@ -19,35 +19,24 @@
 - [Contributors](#-contributors)
 - [License](#-license)
 
-
 ## 🌟 Introduction
 
 VitaLink is an innovative digital health platform designed to streamline communication between patients and a diverse array of healthcare professionals. By centralizing fitness and wellness information in one user-friendly environment, VitaLink facilitates a holistic approach to health and well-being. Our platform not only empowers patients with comprehensive health data but also enables healthcare providers to access and share crucial information swiftly and effectively. With VitaLink, achieving optimal health outcomes through collaborative, informed care is at your fingertips.
 
 ## 📁 Repository Structure
 
+```plaintext
 VitaLink
-├── applications
-│ ├── doctor_app
-│ ├── nutritionist_app
-│ ├── patient_app
-│ ├── psychologist_app
-│ └── trainer_app
-├── .env
-├── .gitignore
-├── README.md
-└── requirements.txt
-
-- `applications/`: This directory contains individual subdirectories for each type of user that the VitaLink platform supports. Each subdirectory houses the application code specific to that user type.
-  - `doctor_app/`: Contains the application for doctors, including agenda management and patient evaluation features.
-  - `nutritionist_app/`: Holds the nutritionist's tools for managing their agenda and creating dietary plans for patients.
-  - `patient_app/`: The application for patients to manage their profiles, schedule appointments, and engage in consultations.
-  - `psychologist_app/`: Includes the psychologist's features for session scheduling and mental health evaluations.
-  - `trainer_app/`: Contains the physical trainer's features for managing schedules and designing training programs.
-- `env/`: A directory typically used to contain a Python virtual environment for dependency management. The developer should create its own environment.
-- `.gitignore`: A text file specifying untracked files that Git should ignore.
-- `README.md`: The markdown file you are currently reading that provides documentation for the project.
-- `requirements.txt`: A text file listing the Python packages required to run the applications within the repository.
+├── applications           # Contains all user-specific applications
+│   ├── doctor_app         # Application for doctors
+│   ├── nutritionist_app   # Application for nutritionists
+│   ├── patient_app        # Application for patients
+│   ├── psychologist_app   # Application for psychologists
+│   └── trainer_app        # Application for physical trainers
+├── .env                   # Environment variables for configuration. Every one should have it's own.
+├── .gitignore             # Specifies intentionally untracked files to ignore
+├── README.md              # The file you are currently reading
+└── requirements.txt       # All the dependencies required for the project
 
 ## ✨ General Features
 
