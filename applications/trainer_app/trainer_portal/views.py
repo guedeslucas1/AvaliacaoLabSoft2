@@ -1,10 +1,26 @@
-from django.http import HttpResponse
+from django.shortcuts import render
+
+users = [
+    {
+        'name': 'Lucas',
+        'email': 'guedeslucas@usp.br',
+        'peso': '75 Kg'
+    },
+    {
+        'name': 'joão',
+        'email': 'joãojoão@usp.br',
+        'peso': '57 Kg'
+    },
+]
+
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    return render(request, 'trainer_portal/home.html')
 
-# patient_portal/views.py
-# from django.shortcuts import render
+def patients(request):
+    context = {
+        'users': users
+    }
+    return render(request, 'trainer_portal/patients.html', context)
 
-# def index(request):
-#     return render(request, 'example.html')
+
