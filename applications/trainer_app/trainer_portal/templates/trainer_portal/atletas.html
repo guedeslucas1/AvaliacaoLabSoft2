@@ -1,0 +1,40 @@
+{% extends "trainer_portal/base.html"%}
+{% block content %}
+<head>
+    <style>
+        .minha-div:hover {
+            background-color: rgb(108, 105, 105); /* Altera a cor de fundo quando o mouse está sobre a div */
+        }
+    </style>
+</head>
+<div class="container">
+    <h1 style="margin-top: 3%;margin-bottom: 8%;">Atletas</h1>
+</div>
+<div class="table-responsive" style="margin-right: 10%;margin-left: 10%;border-color: rgba(255,255,255,0.5);--bs-light: #ffffff;--bs-light-rgb: 255,255,255;text-align: center;">
+    <table class="table">
+        <thead>
+            <tr></tr>
+        </thead>
+        <tbody style="background: rgba(255, 255, 255, 0);text-align: center;">
+            {% for atl_row in athletes_view %}
+            <tr style="background: rgba(255, 255, 255, 0);text-align: center;">
+                {% for atl in atl_row %}
+                <td style="text-align: center;background: rgba(255, 255, 255, 0);">
+                    <a  href="/perfil_atleta/{{atl.id}}" style="color: inherit; text-decoration: none;                    ">
+                        <div class="text-center border rounded-0 shadow-sm profile-box" style="width: 200px;background-color: #ffffff;margin: 5px;text-align: center;">
+                            <div style="height: 50px;background-image: url(&quot;/static/trainer_portal/bg-pattern.png&quot;);background-color: rgba(54,162,177,0);text-align: center;"></div>
+                            <div style="margin-bottom: 20px">
+                                <h4>{{atl.name}}</h4>
+                            </div>
+                        </div>
+                    </a>        
+                </td>
+                {% endfor %}
+                    </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+
+{% endblock content %}

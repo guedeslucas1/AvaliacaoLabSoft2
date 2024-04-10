@@ -1,0 +1,87 @@
+{% extends "trainer_portal/base.html"%}
+{% block content %}
+  <title>
+    Agenda
+  </title>    
+
+  <style>
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+      font-size: 14px;
+    }
+
+    #calendar {
+      background-color: white;
+      max-width: 1100px;
+      margin: 40px auto;
+    }
+  </style>
+  
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js'></script>    
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  
+  <script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var availableSlots = [
+        '2024-04-09T09:00:00', // Exemplo de horário disponível: 8:00 - 9:00
+        '2024-04-09T10:00:00',
+        '2024-04-09T11:00:00'
+        // Adicione mais horários disponíveis conforme necessário
+      ];
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      headerToolbar: {
+            start: '',
+            center: 'title',
+            end: 'prev,next',
+            locale: 'pt-br',
+            
+      },
+      // Configurações do calendário
+      initialView: 'timeGridWeek', // Visualização semanal
+      locale: 'pt-br', // Defina o idioma para português
+      selectable: true,
+      slotDuration: '01:00:00', // Intervalo de 1 hora
+      height: 'auto',
+      selectOverlap: false, // Garante que os usuários não possam selecionar intervalos sobrepostos
+      select: function(info) {
+          // Lógica para lidar com a seleção de intervalos
+          console.log('Intervalo selecionado:', info.start, ' - ', info.end);
+      },
+      
+      slotMinTime: '07:00:00',
+      slotMaxTime: '20:00:00',
+      
+      slotLabelFormat: {
+          hour: 'numeric',
+          minute: '2-digit',
+          omitZeroMinute: false,
+          meridiem: false
+      },
+      eventDidMount: function (eventInfo) {
+        console.log(eventInfo.event.start)
+        eventInfo.el.innerHTML = "<div><div class='fc-event-main-frame'><div ><a style='margin-left: 32px' href='/disponibilidade/"+eventInfo.event.start+"/1/'><button class='btn'  type='button' style='background-color: green;'></button></a><a style='margin-left: 32px' href='/disponibilidade/"+eventInfo.event.start+"/0/'><button class='btn btn-primary'  type='button' style='background-color: red;'></button></a></div></div></div>";
+      },
+      events: {{ events|safe}}
+
+    });
+    calendar.render();
+  }); 
+
+</script>
+
+
+<a href="/agenda">
+  <button class="btn btn-secondary"  type="button" style="margin: 6px;" >Voltar</button>
+</a>
+
+<div id='calendar'></div>
+
+{% endblock content %}

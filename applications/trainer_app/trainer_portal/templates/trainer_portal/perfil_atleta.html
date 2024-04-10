@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+{% extends "trainer_portal/base.html"%}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Dados do Atleta</h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Nome</h5>
+            <p class="card-text">{{ atl_data.name }}</p>
+
+            <h5 class="card-title">Email</h5>
+            <p class="card-text">{{ atl_data.email }}</p>
+
+            <h5 class="card-title">Idade</h5>
+            <p class="card-text">{{ atl_data.age }} anos</p>
+
+            <h5 class="card-title">Peso</h5>
+            <p class="card-text">{{ atl_data.weight }} Kg</p>
+
+            <h5 class="card-title">Altura</h5>
+            <p class="card-text">{{ atl_data.height }} m</p>
+
+            <h5 class="card-title">Gênero</h5>
+            <p class="card-text">{{ atl_data.gender }}</p>
+        </div>
+        <div class="card-footer">
+            <!-- <a href="#" class="btn btn-link" data-toggle="collapse" data-target="#observacoes">Observações</a> -->
+            <a href="#" class="custom-link" data-toggle="collapse" data-target="#observacoes" onclick="rotateArrow()">
+                <span id="arrow" class="arrow-down">&#9660;</span>
+                <b>Observações</b>
+            </a>
+            <div class="collapse" id="observacoes">
+                <div class="card card-body">
+                    <h5>Observações Médicas</h5>
+                    <p>{{ atl_data.obs_doctor }}</p>
+
+                    <h5>Observações Nutricionais</h5>
+                    <p>{{ atl_data.obs_nutri }}</p>
+
+                    <h5>Observações do Psicólogo</h5>
+                    <p>{{ atl_data.obs_psic }}</p>
+                </div>
+            </div>
+            <hr>
+            <h5>Comentário do Treinador</h5>
+            <div class="input-group mb-3">
+                <textarea class="form-control" placeholder="Adicionar comentário" style="resize: vertical;"></textarea>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-secondary mr-3" type="button">Registrar</button>
+                
+            </div>
+            <hr>
+            <h5>Planos de Exercício</h5>
+            <div class="input-group mb-3">
+                <label class="btn btn-secondary">
+                        Escolher PDF <input id="pdfInput" type="file" style="display: none;" accept="application/pdf" onchange="displayFileName()">
+
+                </label>
+                <button style="margin-left: 10px;" class="btn btn-secondary" type="button" onclick="submitPDF()">Enviar</button>
+            </div>
+            <div class="input-group-append">
+                <span class="input-group-text" id="selectedFileName"></span>
+            </div>
+            <hr>
+            <h5>Chat</h5>
+            <button class="btn btn-secondary mr-3" type="button">Iniciar chat</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    function displayFileName() {
+        var selectedFile = document.getElementById('pdfInput').files[0];
+        var fileNameContainer = document.getElementById('selectedFileName');
+
+        if (selectedFile) {
+            fileNameContainer.textContent = selectedFile.name;
+        } else {
+            fileNameContainer.textContent = '';
+        }
+    }
+
+
+    function rotateArrow() {
+        console.log("oioioi")
+        $('#arrow').toggleClass('rotate'); // Adiciona ou remove a classe 'rotate'
+    }
+</script>
+{% endblock content %}

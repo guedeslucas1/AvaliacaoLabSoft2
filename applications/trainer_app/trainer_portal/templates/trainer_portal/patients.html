@@ -1,8 +1,0 @@
-{% extends "trainer_portal/base.html"%}
-{% block content %}
-    <h1>Lista de pacientes</h1> 
-    {% for user in users %}
-        <h2> {{ user.name }} </h2>
-        <p> {{user.email}} | {{user.peso}}</p>
-    {% endfor %}       
-{% endblock content %}
