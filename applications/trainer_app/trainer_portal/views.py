@@ -111,10 +111,7 @@ def agenda(request):
 
 def check_available(request, start_time):
     start_time = start_time.astimezone(pytz.utc) - timedelta(hours=3)
-    print("testando")
     user_test = User.objects.get(username=request.user) 
-    print(user_test)
-    print(TimeSlot.objects.filter(professional_id=user_test))
     for slots in TimeSlot.objects.filter(professional_id=user_test):
         if slots.time == start_time:
             return True
@@ -130,18 +127,13 @@ def mudar_disponibilidade(request, time_slot_id, add_or_remove):
     exists = False
 
     for slots in TimeSlot.objects.filter(professional_id=request.user):
-        print(slots.time, start_time, slots.time==start_time)
         if slots.time == start_time:
-            print("ACHEI")
             if add_time_slot:
-                print("ignorando")
                 return redirect(reverse('trainer-portal-disponibilidade'))
             else:
-                print("removendo")
                 slots.delete()
             
     if add_time_slot:
-        print("adicionando")
         new_time_slot = TimeSlot(time = start_time, professional_id = request.user)
         new_time_slot.save()
     return redirect(reverse('trainer-portal-disponibilidade'))
