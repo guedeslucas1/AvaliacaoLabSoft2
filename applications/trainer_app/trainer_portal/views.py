@@ -6,16 +6,95 @@ from calendar import HTMLCalendar
 from datetime import datetime, timedelta  
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-import pytz
-from .models import TimeSlot
 from django.shortcuts import render
-from rest_framework import generics
-from .serializers import TimeSlotSerializer
+import pytz
 
-class TimeFrameListCreate(generics.ListAPIView):
-    queryset = TimeSlot.objects.all()
-    serializer_class = TimeSlotSerializer
+from django.contrib.auth.models import User
+from .models import TimeSlot
+from .serializers import (TimeSlotSerializer, UserSerializer)
 
+
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
+from rest_framework import generics, viewsets
+
+
+from drf_yasg.utils import swagger_auto_schema
+
+#API CALLS TO FEED OTHER APPLICATIONS
+
+class TimeSlotsViewSet(ViewSet):
+    @swagger_auto_schema(
+        method='get',
+        responses={200: TimeSlotSerializer(many=True)},
+        operation_description="Retrieve a list of time slots."
+    )
+    @action(detail=False, url_path='')
+    def all(self, request):
+        time_slots = TimeSlot.objects.all()
+        serializer = TimeSlotSerializer(time_slots, many=True)
+        return Response(serializer.data)
+    
+    @swagger_auto_schema(
+        method='get',
+        responses={200: TimeSlotSerializer(many=True)},
+        operation_description="Retrieve a list of time slots for a given professional."
+    )
+    @action(detail=False, url_path='(?P<trainer_id>\d+)')
+    def professional_patients(self, request, trainer_id):
+        time_slots = TimeSlot.objects.filter(professional_id=trainer_id)
+        serializer = TimeSlotSerializer(time_slots, many=True)
+        a = list()
+        for slot in serializer.data:
+            a.append(slot["time"])
+        print(a)
+        return Response(a)
+
+class UserViewSet(ViewSet):
+    @swagger_auto_schema(
+        method='get',
+        responses={200: UserSerializer()},
+        operation_description="Retrieve a list of users."
+    )
+    @action(detail=False, methods=['get'])
+    def all(self, request):
+        users = User.objects.all()
+        print(users)
+        serializer = UserSerializer(users, many=True)
+        return Response(serializer.data)
+    
+    @swagger_auto_schema(
+        method='get',
+        responses={200: UserSerializer()},
+        operation_description="Retrieve information of a single user."
+    )
+    @action(detail=False, methods=['get'], url_path='(?P<user_id>\d+)')
+    def trainer_details(self, request, user_id):
+        users = User.objects.get(pk=user_id)
+        serializer = UserSerializer(users)
+        return Response(serializer.data)
+
+    @swagger_auto_schema(
+        method='get',
+        responses={200: UserSerializer()},
+        operation_description="Retrieve information availability of all trainers."
+    )
+    @action(detail=False, methods=['get'], url_path='time_slots')
+    def trainer_time_slots(self, request):
+        users = User.objects.all()
+        serializer = UserSerializer(users, many = True)
+
+        for u in serializer.data:
+            print(u)
+            week_days = set()
+            for slot in TimeSlot.objects.filter(professional_id=u["id"]):
+                week_days.add(slot.time.weekday())
+
+            print(week_days)
+            u["days_available"] = list(week_days)
+        
+        return Response(serializer.data)
 
 events = [
     {
@@ -40,7 +119,6 @@ events = [
         "recurrency": 14
     },
 ]
-
 
 athletes = [
     {
@@ -194,10 +272,9 @@ def perfil(request):
 def atletas(request):
 
     athletes_view = list()
-
     counter = 0
-    
     athletes_row = list()
+    
     for a in athletes:
         athletes_row.append(a)
         counter += 1 
@@ -224,3 +301,11 @@ def perfil_atleta(request, atl_id):
             atl_data = atl
 
     return render(request, 'trainer_portal/perfil_atleta.html', {"atl_data": atl_data})
+
+def chat_atleta(request, atl_id):
+
+    atl_data = dict()
+    for atl in athletes:
+        if atl["id"] == int(atl_id):
+            atl_data = atl
+    return render(request, 'trainer_portal/chat.html', {"atl_data": atl_data})
