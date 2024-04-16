@@ -6,10 +6,7 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Nome</h5>
-            <p class="card-text">{{ atl_data.name }}</p>
-
-            <h5 class="card-title">Email</h5>
-            <p class="card-text">{{ atl_data.email }}</p>
+            <p class="card-text">{{ atl_data.full_name }}</p>
 
             <h5 class="card-title">Idade</h5>
             <p class="card-text">{{ atl_data.age }} anos</p>
@@ -31,23 +28,34 @@
             </a>
             <div class="collapse" id="observacoes">
                 <div class="card card-body">
+                    {% if atl_data.personal_trainer_observation != None %}
+                    <h5>Observações do Treinador Físico</h5>
+                    <p>{{ atl_data.personal_trainer_observation }}</p>
+                    {% endif %}
+                    
+                    {% if atl_data.medical_observation != None %}
                     <h5>Observações Médicas</h5>
-                    <p>{{ atl_data.obs_doctor }}</p>
-
+                    <p>{{ atl_data.medical_observation }}</p>
+                    {% endif %}
+                    
+                    {% if atl_data.nutritionist_observation != None %}
                     <h5>Observações Nutricionais</h5>
-                    <p>{{ atl_data.obs_nutri }}</p>
-
+                    <p>{{ atl_data.nutritionist_observation }}</p>
+                    {% endif %}
+                    
+                    {% if atl_data.psychologist_observation != None %}
                     <h5>Observações do Psicólogo</h5>
-                    <p>{{ atl_data.obs_psic }}</p>
+                    <p>{{ atl_data.psychologist_observation }}</p>
+                    {% endif %}
                 </div>
             </div>
             <hr>
             <h5>Comentário do Treinador</h5>
             <div class="input-group mb-3">
-                <textarea class="form-control" placeholder="Adicionar comentário" style="resize: vertical;"></textarea>
+                <textarea id="observationInput"class="form-control" placeholder="Adicionar comentário" style="resize: vertical;"></textarea>
             </div>
             <div class="mb-3">
-                <button class="btn btn-secondary mr-3" type="button">Registrar</button>
+                <button class="btn btn-secondary mr-3" type="button" onclick="submitObservation()">Registrar</button>
                 
             </div>
             <hr>
@@ -76,6 +84,24 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 <script>
+
+    function submitObservation() {
+        var endpoint = "http://ec2-52-67-134-153.sa-east-1.compute.amazonaws.com:8000/api/patients/{{ atl_data.id }}/personal%20trainer/{{ request.user.id }}/observation/"
+        var observation = document.getElementById("observationInput").value
+        console.log("enviando: " + observation)
+        console.log("para " + endpoint)
+
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ "observation": observation }),
+        })
+
+    }
+
     function displayFileName() {
         var selectedFile = document.getElementById('pdfInput').files[0];
         var fileNameContainer = document.getElementById('selectedFileName');

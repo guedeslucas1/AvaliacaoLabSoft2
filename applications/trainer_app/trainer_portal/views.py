@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render
 import pytz
+import requests
 
 from django.contrib.auth.models import User
 from .models import TimeSlot
@@ -21,6 +22,9 @@ from rest_framework import generics, viewsets
 
 
 from drf_yasg.utils import swagger_auto_schema
+
+#PATIENT API ENDPOINTS
+base_endpoint = "http://ec2-52-67-134-153.sa-east-1.compute.amazonaws.com:8000/api/"
 
 #API CALLS TO FEED OTHER APPLICATIONS
 
@@ -48,7 +52,6 @@ class TimeSlotsViewSet(ViewSet):
         a = list()
         for slot in serializer.data:
             a.append(slot["time"])
-        print(a)
         return Response(a)
 
 class UserViewSet(ViewSet):
@@ -60,7 +63,6 @@ class UserViewSet(ViewSet):
     @action(detail=False, methods=['get'])
     def all(self, request):
         users = User.objects.all()
-        print(users)
         serializer = UserSerializer(users, many=True)
         return Response(serializer.data)
     
@@ -86,76 +88,17 @@ class UserViewSet(ViewSet):
         serializer = UserSerializer(users, many = True)
 
         for u in serializer.data:
-            print(u)
             week_days = set()
             for slot in TimeSlot.objects.filter(professional_id=u["id"]):
                 week_days.add(slot.time.weekday())
 
-            print(week_days)
             u["days_available"] = list(week_days)
         
         return Response(serializer.data)
 
-events = [
-    {
-        "day": 1,
-        "month": 5,
-        "time": "8:30",
-        "description": "Treinamento de Jorge",
-        "recurrency": 0,
-    },
-    {
-        "day": 8,
-        "month": 4,
-        "time": "8:30",
-        "description": "Treinamento de João",
-        "recurrency": 7,
-    },
-    {
-        "day": 11,
-        "month": 4,
-        "time": "8:30",
-        "description": "Treinamento de Maria",
-        "recurrency": 14
-    },
-]
 
-athletes = [
-    {
-        "id": 120,
-        "name": "Jorge Silva",
-        "email": "jorgesilva@gmail.com",
-        "age": 35,
-        "weight": 80,
-        "height": 80,
-        "gender": "Masculino",
-        "obs_doctor": "Jorge tem problemas nos ossos.",
-        "obs_nutri": "Jorge está fazendo um regime radical.",
-        "obs_psic": "Jorge está fazendo tratamento para ansiedade.",
-        
-    },
-    {
-        "id": 122,
-        "name": "João",
-        "age": 70,
-        "weight": 75,
-        "height": 80,
-        "gender": "Masculino",
-    },
-    {
-        "id": 123,
-        "name": "Maria",
-        "email": "emaildamaria@bing.com",
-        "age": 30,
-        "weight": 62,
-        "height": 80,
-        "gender": "Feminino",
-        "obs_doctor": "Maria tem asma.",
-        "obs_nutri": "Maria está fazendo uma dieta baseada em carboidratos.",
-        "obs_psic": "Maria teve alta das consultas.",
 
-    },
-]
+athletes = list()
 
 def index(request):
     return render(request, 'users/register.html')
@@ -183,8 +126,29 @@ def is_event_on_day(event, target_day, target_month):
 
 @login_required
 def agenda(request):
+    
+    response = requests.get(base_endpoint+"appointments/")
+
+    appointments = response.json()
+
+    events = list()
+    for ap in appointments:
+        if ap['profession'] == 'personal trainer' and ap['professional_id'] == request.user.id:
+            patient_id = ap['patient_id']
+
+            patient_data = requests.get(base_endpoint+"patients/"+str(patient_id)+"/details/").json()
+
+            events.append(
+                {
+                    'title': patient_data["full_name"],
+                    'start': ap['time'][:-1],  # Formato ISO 8601
+                    'end': (datetime.strptime(ap['time'][:-1], '%Y-%m-%dT%H:%M:%S') + timedelta(hours=1)).strftime('%Y-%m-%dT%H:%M:%S'),  # 1 hora de duração
+                }
+            )
+
+    
     return render(request, 'trainer_portal/agenda.html',
-        {}
+        {'events': events}
     )
 
 def check_available(request, start_time):
@@ -270,7 +234,20 @@ def perfil(request):
 
 @login_required
 def atletas(request):
+    global athletes
+    response = requests.get(base_endpoint+"appointments/")
 
+    appointments = response.json()
+
+    athletes = list()
+    for ap in appointments:
+        if ap['profession'] == 'personal trainer' and ap['professional_id'] == request.user.id:
+            patient_id = ap['patient_id']
+
+            patient_data = requests.get(base_endpoint+"patients/"+str(patient_id)+"/details/").json()
+            athletes.append(patient_data)
+
+    # athletes = list()
     athletes_view = list()
     counter = 0
     athletes_row = list()
@@ -294,12 +271,7 @@ def atletas(request):
     )
 
 def perfil_atleta(request, atl_id):
-
-    atl_data = dict()
-    for atl in athletes:
-        if atl["id"] == int(atl_id):
-            atl_data = atl
-
+    atl_data = requests.get(base_endpoint+"patients/"+str(atl_id)+"/details/").json()
     return render(request, 'trainer_portal/perfil_atleta.html', {"atl_data": atl_data})
 
 def chat_atleta(request, atl_id):
