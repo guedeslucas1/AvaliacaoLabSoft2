@@ -51,7 +51,7 @@ class TimeSlotsViewSet(ViewSet):
         serializer = TimeSlotSerializer(time_slots, many=True)
         a = list()
         for slot in serializer.data:
-            a.append(slot["time"])
+            a.append(slot["time"][:-1])
         return Response(a)
 
 class UserViewSet(ViewSet):
