@@ -9,6 +9,9 @@ class TimeSlotSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    #rename username to name to make applications compatible
+    name = serializers.CharField(source='username')
+
     class Meta:
         model = User
-        fields = ('username', 'email', 'id')
+        fields = ('name', 'email', 'id')
