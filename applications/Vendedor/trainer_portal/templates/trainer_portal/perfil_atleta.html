@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+{% extends "trainer_portal/base.html"%}
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Comprar ingresso</h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Deseja comprar ingresso {{atl_data.nome_lugar}}?</h5>
+            <p class="card-text">
+                <h1 class="mb-4">Comprar ingresso</h1>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}                  
+                        <button class="btn btn-primary mr-3" type="submit">Comprar</button>
+                </form>
+                <a href="{% url 'trainer-portal-atletas' %}" >
+                    <button class="btn btn-secondary mr-3" >Voltar</button>
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+
+    function submitObservation() {
+        var endpoint = "http://ec2-52-67-134-153.sa-east-1.compute.amazonaws.com:8000/api/patients/{{ atl_data.id }}/personal%20trainer/{{ request.user.id }}/observation/"
+        var observation = document.getElementById("observationInput").value
+        console.log("enviando: " + observation)
+        console.log("para " + endpoint)
+
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ "observation": observation }),
+        })
+
+    }
+
+    function displayFileName() {
+        var selectedFile = document.getElementById('pdfInput').files[0];
+        var fileNameContainer = document.getElementById('selectedFileName');
+
+        if (selectedFile) {
+            fileNameContainer.textContent = selectedFile.name;
+        } else {
+            fileNameContainer.textContent = '';
+        }
+    }
+
+
+    function rotateArrow() {
+        console.log("oioioi")
+        $('#arrow').toggleClass('rotate'); // Adiciona ou remove a classe 'rotate'
+    }
+</script>
+{% endblock content %}
