@@ -22,4 +22,5 @@ urlpatterns = [
     path('perfil_atleta/<str:atl_id>/chat', views.chat_atleta, name='trainer-portal-chat-atleta'),
     # path('timeslots/', views.TimeFrameListCreate.as_view(), name='timeslot-view-create')
     path('api/', include(router.urls)),
+    path('download_pdf/<str:atl_id>/<str:user_id>/<str:file_name>/', views.download_pdf, name='download_pdf'),
 ]

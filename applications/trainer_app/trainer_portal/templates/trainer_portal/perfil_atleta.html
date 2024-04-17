@@ -6,7 +6,7 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Nome</h5>
-            <p class="card-text">{{ atl_data.full_name }}</p>
+            <p class="card-text">{{ atl_data.name }}</p>
 
             <h5 class="card-title">Idade</h5>
             <p class="card-text">{{ atl_data.age }} anos</p>
@@ -51,22 +51,36 @@
             </div>
             <hr>
             <h5>Comentário do Treinador</h5>
-            <div class="input-group mb-3">
-                <textarea id="observationInput"class="form-control" placeholder="Adicionar comentário" style="resize: vertical;"></textarea>
-            </div>
-            <div class="mb-3">
-                <button class="btn btn-secondary mr-3" type="button" onclick="submitObservation()">Registrar</button>
-                
-            </div>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <textarea name="observation"class="form-control" placeholder="Adicionar comentário" style="resize: vertical;"></textarea>
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-secondary mr-3" type="submit">Registrar</button>
+                </div>
+            </form>
             <hr>
             <h5>Planos de Exercício</h5>
             <div class="input-group mb-3">
-                <label class="btn btn-secondary">
-                        Escolher PDF <input id="pdfInput" type="file" style="display: none;" accept="application/pdf" onchange="displayFileName()">
-
-                </label>
-                <button style="margin-left: 10px;" class="btn btn-secondary" type="button" onclick="submitPDF()">Enviar</button>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label class="btn btn-secondary">
+                            Escolher PDF <input id="pdfInput" type="file" name="file" style="display: none;" accept="application/pdf" onchange="displayFileName()">
+                    </label>
+                    <button style="margin-left: 10px;" class="btn btn-secondary" type="submit" onclick="submitPDF()">Enviar</button>
+                </form>
             </div>
+            {% for file in atl_data.files %}
+            <li class="list-group-item d-flex align-items-center">
+                <div>
+                    <span>{{ file.file_name }}</span>
+                </div>
+                <div>
+                    <a href="{% url 'download_pdf' atl_id=file.atl_id user_id=file.user_id file_name=file.file_name %}" style="margin-left: 10px;" download>Download</a>
+                </div>
+            </li>
+            {% endfor %}
             <div class="input-group-append">
                 <span class="input-group-text" id="selectedFileName"></span>
             </div>
